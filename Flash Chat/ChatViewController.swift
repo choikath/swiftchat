@@ -15,6 +15,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     // Declare instance variables here
     var messageArray : [Message] = [Message]()
+    var memeArray = ["meme-beyonceamazing", "meme-oprahhighfives","meme-wonderfulwonderwoman", "meme-superduperanchorman"]
+    var iconArray = ["banana", "heart", "claps"]
     
     // We've pre-linked the IBOutlets
     @IBOutlet var heightConstraint: NSLayoutConstraint!
@@ -34,6 +36,10 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         //TODO: Set yourself as the delegate of the text field here:
         messageTextfield.delegate = self
         
+        
+        //TODO: Set basic look and navigation UI
+        self.navigationController?.hidesNavigationBarHairline = true
+        self.setStatusBarStyle(UIStatusBarStyleContrast)
         
         //TODO: Set the tapGesture here:
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
@@ -63,17 +69,31 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
         cell.messageBody.text = messageArray[indexPath.row].messageBody
         cell.senderUsername.text = messageArray[indexPath.row].sender
+        cell.recipientUsername.text = messageArray[indexPath.row].recipient
+//        UIImage.gif(name: memes[meme1.tag])
+        var memeIndex = Int(arc4random_uniform(UInt32(memeArray.count)))
+        var iconIndex = Int(arc4random_uniform(UInt32(iconArray.count)))
+        cell.avatarImageView.image = UIImage.gif(name: memeArray[memeIndex])
+        cell.iconImageView.image = UIImage(named: iconArray[iconIndex])
         
-        cell.avatarImageView.image = UIImage(named:"egg")
         
-        if cell.senderUsername.text == Auth.auth().currentUser?.email as String! { //messages we sent
-            cell.avatarImageView.backgroundColor = UIColor.flatPlum()
-            cell.messageBackground.backgroundColor = UIColor.flatWatermelon()
-        }
-        else {
-            cell.avatarImageView.backgroundColor = UIColor.flatMint()
-            cell.messageBackground.backgroundColor = UIColor.flatSkyBlue()
-        }
+        
+        
+//        if cell.senderUsername.text == Auth.auth().currentUser?.email as String! { //messages we sent
+////            cell.avatarImageView.backgroundColor = UIColor.flatPlum()
+////            cell.messageBackground.backgroundColor = UIColor.flatWatermelon()
+//        }
+//        else {
+            //cell.avatarImageView.backgroundColor = UIColor.flatMint()
+//            var colorArray = NSArray(ofColorsWithColorScheme:ColorScheme.triadic, with:UIColor.randomFlat(), flatScheme:true) as! UIColor
+
+//            cell.messageBackground.backgroundColor = UIColor.randomFlat()
+//            cell.messageBody.textColor = UIColor(contrastingBlackOrWhiteColorOn:      cell.messageBackground.backgroundColor, isFlat:true)
+
+            cell.messageBody.textColor = UIColor.randomFlat()
+            cell.recipientUsername.textColor = cell.messageBody.textColor
+            
+//        }
         
         return cell
     }
@@ -152,7 +172,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         let messagesDB = Database.database().reference().child("Messages")
         
-        let messageDictionary = ["Sender": Auth.auth().currentUser?.email, "MessageBody": messageTextfield.text!]
+        let messageDictionary = ["Sender": Auth.auth().currentUser?.email, "Recipient": messageTextfield.text!, "MessageBody": "HighFive!"]
         
         messagesDB.childByAutoId().setValue(messageDictionary) {
             (error, reference) in
@@ -179,10 +199,12 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             
             let text = snapshotValue["MessageBody"]! //unwrap
             let sender = snapshotValue["Sender"]!
+            let recipient = snapshotValue["Recipient"]!
             
             let message = Message()
             message.messageBody = text
             message.sender = sender
+            message.recipient = recipient
 
             self.messageArray.append(message)
             

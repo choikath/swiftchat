@@ -6,12 +6,12 @@
     },
     {
       "idiom" : "universal",
-      "filename" : "background@2x.png",
+      "filename" : "beach.jpg",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "background@3x.png",
+      "filename" : "max.jpg",
       "scale" : "3x"
     }
   ],
